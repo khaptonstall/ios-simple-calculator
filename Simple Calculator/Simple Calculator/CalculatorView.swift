@@ -19,6 +19,7 @@ class CalculatorView: UIViewController{
     var isTyping = true
     var decimalUsed = false
     
+    var needsCleared = false
     
     enum Operators{
         case Add, Subtract, Multiply, Divide, Mod
@@ -37,11 +38,16 @@ class CalculatorView: UIViewController{
         - parameter sender:     The clear button
     */
     @IBAction func clear(sender: UIButton) {
+        clearAllValues()
+    }
+    
+    func clearAllValues(){
         displayNumber.text = "0"
         lhs = nil
         isTyping = true
         currentOperator = nil
         decimalUsed = false
+        needsCleared = false
     }
     
     /**
@@ -50,6 +56,11 @@ class CalculatorView: UIViewController{
         - parameter sender:     The backspace button
      */
     @IBAction func backspace(sender: UIButton) {
+        if needsCleared{
+            clearAllValues()
+            needsCleared = false
+        }
+        
         if displayNumber.text != "0" && displayNumber.text?.characters.count >= 2{
             displayNumber.text = String(displayNumber.text!.characters.dropLast())
         }
@@ -67,6 +78,11 @@ class CalculatorView: UIViewController{
         - parameter sender:     One of the number buttons from the number pad or the decimal button
     */
     @IBAction func numberPressed(sender: UIButton) {
+        if needsCleared{
+            clearAllValues()
+            needsCleared = false
+        }
+        
         if sender.titleLabel?.text == "."{
             if decimalUsed == false{
                 decimalUsed = true
@@ -97,14 +113,19 @@ class CalculatorView: UIViewController{
         - parameter sender:     One of the operator buttons
     */
     @IBAction func operatorPressed(sender: UIButton) {
+        if needsCleared{
+            clearAllValues()
+            needsCleared = false
+        }
+        
         let op = sender.titleLabel?.text
         
         if op == "+/-" && displayNumber.text != "0"{
             if displayNumber.text?.characters.first == "-"{
-                displayNumber.text = String(displayNumber.text?.characters.dropFirst())
+                displayNumber.text = String(displayNumber.text!.characters.dropFirst())
             }
             else{
-                displayNumber.text = "-\(displayNumber.text)"
+                displayNumber.text = "-\(displayNumber.text!)"
             }
         }
         else if op != "+/-" && currentOperator == nil{
@@ -150,7 +171,17 @@ class CalculatorView: UIViewController{
             case .Mod:
                 result = lhs! % rhs
             }
-            displayNumber.text = String(result)
+            
+            // If number is an Int, don't display decimal
+            let resultAsInt = Int(result)
+            if result - Double(resultAsInt) == 0{
+                displayNumber.text = String(resultAsInt)
+            }
+            else{
+                displayNumber.text = String(result)
+
+            }
+            needsCleared = true
         }
     }
     
