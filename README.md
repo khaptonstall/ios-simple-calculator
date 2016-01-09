@@ -4,4 +4,4 @@ A simple binary calculator for iOS that resembles the Apple default calculator a
 The simple implementation was just to get some experience using new StackViews.
 
 ## Screen Shot
-![](Screens/ScreenShot.png)    
+<img src="https://raw.github.com/khaptonstall/ios-simple-calculator/master/Screens/ScreenShot.png" width="180" />
